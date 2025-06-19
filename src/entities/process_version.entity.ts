@@ -1,12 +1,16 @@
 import {
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Process } from './process.entity';
+import { FileAccessEvents } from './file_access_events.entity';
+import { FileRelationships } from './file_relationships.entity';
+import { processFileReads } from './process_file_reads.entity';
 
 @Entity('process_versions')
 export class ProcessVersions {
@@ -44,4 +48,17 @@ export class ProcessVersions {
     nullable: true,
   })
   environmentHash: string;
+  @Index('PROCESS_ID_VER_NUM', [`process_id`, `version_number`], {
+    unique: true,
+  })
+  processIdVerNum: number;
+
+  @OneToMany(() => FileAccessEvents, (access) => access.version)
+  access: FileAccessEvents[];
+
+  @OneToMany(() => FileRelationships, (file) => file.version)
+  relationship: FileRelationships[];
+
+  @OneToMany(() => processFileReads, (file) => file.processVersionId)
+  fileRead: processFileReads[];
 }

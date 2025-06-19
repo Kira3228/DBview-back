@@ -1,4 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, Index } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Index,
+  OneToMany,
+} from 'typeorm';
+import { FileAccessEvents } from './file_access_events.entity';
+import { FileRelationships } from './file_relationships.entity';
+import { FileOrigins } from './file-origins.entity';
+import { processFileReads } from './process_file_reads.entity';
+import { SystemEvents } from './system_events.entity';
 
 @Entity('monitored_files')
 export class MonitoredFile {
@@ -71,4 +82,23 @@ export class MonitoredFile {
     unique: true,
   })
   uniqueInodePath: number;
+
+  @OneToMany(() => FileAccessEvents, (access) => access.file)
+  access: FileAccessEvents[];
+
+  @OneToMany(() => FileRelationships, (file) => file.parentId)
+  parentRelation: FileRelationships[];
+  @OneToMany(() => FileRelationships, (file) => file.childrenId)
+  childRelation: FileRelationships[];
+
+  @OneToMany(() => FileOrigins, (origin) => origin.file)
+  origins: FileOrigins[];
+  @OneToMany(() => FileOrigins, (origins) => origins.originFile)
+  descendants: FileOrigins[];
+
+  @OneToMany(() => processFileReads, (file) => file.monitoredFileId)
+  fileRead: processFileReads[];
+
+  @OneToMany(() => SystemEvents, (event) => event.relatedFileId)
+  systemEvents: SystemEvents[];
 }

@@ -1,5 +1,6 @@
 import { ColdObservable } from 'rxjs/internal/testing/ColdObservable';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Process } from './process.entity';
 
 @Entity('users')
 export class User {
@@ -30,4 +31,7 @@ export class User {
     default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
+
+  @OneToMany(()=>Process, process=>process.user)
+  processes: Process[]
 }
