@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './user.entity';
-import { ProcessVersions } from './process_version.entity';
-import { SystemEvents } from './system_events.entity';
+import { ProcessVersion } from './process_version.entity';
+import { SystemEvent } from './system_events.entity';
 
 @Entity('processes')
 export class Process {
@@ -40,14 +40,14 @@ export class Process {
   @Column({ name: 'process_start_time', type: 'datetime' })
   processStartTime: Date;
 
-  @OneToMany(() => ProcessVersions, (versions) => versions.process)
-  versions: ProcessVersions[];
+  @OneToMany(() => ProcessVersion, (versions) => versions.process)
+  versions: ProcessVersion[];
   @ManyToOne(() => User, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @OneToMany(() => SystemEvents, (event) => event.relatedProcessId)
-  systemEvents: SystemEvents[];
+  @OneToMany(() => SystemEvent, (event) => event.relatedProcessId)
+  systemEvents: SystemEvent[];
 }

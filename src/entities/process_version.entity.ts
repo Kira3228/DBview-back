@@ -8,12 +8,15 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Process } from './process.entity';
-import { FileAccessEvents } from './file_access_events.entity';
-import { FileRelationships } from './file_relationships.entity';
-import { processFileReads } from './process_file_reads.entity';
-
+import { FileAccessEvent } from './file_access_events.entity';
+import { FileRelationship } from './file_relationships.entity';
+import { ProcessFileRead } from './process_file_reads.entity';
+@Index('idx_process_versions_process', ['process'])
+@Index('PROCESS_ID_VER_NUM', [`process`, `versionNumber`], {
+  unique: true,
+})
 @Entity('process_versions')
-export class ProcessVersions {
+export class ProcessVersion {
   @PrimaryGeneratedColumn()
   id: number;
   @ManyToOne(() => Process, (process) => process.versions, {
@@ -48,17 +51,13 @@ export class ProcessVersions {
     nullable: true,
   })
   environmentHash: string;
-  @Index('PROCESS_ID_VER_NUM', [`process_id`, `version_number`], {
-    unique: true,
-  })
-  processIdVerNum: number;
 
-  @OneToMany(() => FileAccessEvents, (access) => access.version)
-  access: FileAccessEvents[];
+  @OneToMany(() => FileAccessEvent, (access) => access.version)
+  access: FileAccessEvent[];
 
-  @OneToMany(() => FileRelationships, (file) => file.version)
-  relationship: FileRelationships[];
+  @OneToMany(() => FileRelationship, (file) => file.version)
+  relationship: FileRelationship[];
 
-  @OneToMany(() => processFileReads, (file) => file.processVersionId)
-  fileRead: processFileReads[];
+  @OneToMany(() => ProcessFileRead, (file) => file.processVersionId)
+  fileRead: ProcessFileRead[];
 }

@@ -5,12 +5,17 @@ import {
   Index,
   OneToMany,
 } from 'typeorm';
-import { FileAccessEvents } from './file_access_events.entity';
-import { FileRelationships } from './file_relationships.entity';
-import { FileOrigins } from './file-origins.entity';
-import { processFileReads } from './process_file_reads.entity';
-import { SystemEvents } from './system_events.entity';
-
+import { FileAccessEvent } from './file_access_events.entity';
+import { FileRelationship } from './file_relationships.entity';
+import { FileOrigin } from './file_origins.entity';
+import { SystemEvent } from './system_events.entity';
+import { ProcessFileRead } from './process_file_reads.entity';
+@Index('idx_monitored_files_inode', ['inode'])
+@Index('idx_monitored_files_path', ['filePath'])
+@Index('idx_monitored_files_original', ['isOriginalMarked'])
+@Index('IDX_MONITORED_FILES_INODE_PATH', ['inode', 'filePath'], {
+  unique: true,
+})
 @Entity('monitored_files')
 export class MonitoredFile {
   @PrimaryGeneratedColumn()
@@ -78,27 +83,23 @@ export class MonitoredFile {
     nullable: true,
   })
   extendedAttributes: string;
-  @Index('IDX_MONITORED_FILES_INODE_PATH', ['inode', 'filePath'], {
-    unique: true,
-  })
-  uniqueInodePath: number;
 
-  @OneToMany(() => FileAccessEvents, (access) => access.file)
-  access: FileAccessEvents[];
+  @OneToMany(() => FileAccessEvent, (access) => access.file)
+  access: FileAccessEvent[];
 
-  @OneToMany(() => FileRelationships, (file) => file.parentId)
-  parentRelation: FileRelationships[];
-  @OneToMany(() => FileRelationships, (file) => file.childrenId)
-  childRelation: FileRelationships[];
+  @OneToMany(() => FileRelationship, (file) => file.parentId)
+  parentRelation: FileRelationship[];
+  @OneToMany(() => FileRelationship, (file) => file.childrenId)
+  childRelation: FileRelationship[];
 
-  @OneToMany(() => FileOrigins, (origin) => origin.file)
-  origins: FileOrigins[];
-  @OneToMany(() => FileOrigins, (origins) => origins.originFile)
-  descendants: FileOrigins[];
+  @OneToMany(() => FileOrigin, (origin) => origin.file)
+  origins: FileOrigin[];
+  @OneToMany(() => FileOrigin, (origins) => origins.originFile)
+  descendants: FileOrigin[];
 
-  @OneToMany(() => processFileReads, (file) => file.monitoredFileId)
-  fileRead: processFileReads[];
+  @OneToMany(() => ProcessFileRead, (file) => file.monitoredFileId)
+  fileRead: ProcessFileRead[];
 
-  @OneToMany(() => SystemEvents, (event) => event.relatedFileId)
-  systemEvents: SystemEvents[];
+  @OneToMany(() => SystemEvent, (event) => event.relatedFileId)
+  systemEvents: SystemEvent[];
 }

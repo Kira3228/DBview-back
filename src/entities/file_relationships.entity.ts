@@ -6,15 +6,23 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { MonitoredFile } from './monitored-file.entity';
-import { ProcessVersions } from './process_version.entity';
-
+import { MonitoredFile } from './monitored_file.entity';
+import { ProcessVersion } from './process_version.entity';
+@Index('idx_file_relationships_parent', ['parentId'])
+@Index('idx_file_relationships_child', ['childrenId'])
+@Index(
+  `PARENT_ID_CHILD_FILE_ID_RELATIONSHIP_TYPE`,
+  [`parentId`, `childrenId`, `version`],
+  {
+    unique: true,
+  },
+)
 @Entity(`file_relationships`)
-export class FileRelationships {
+export class FileRelationship {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: `relationship_type`, type: `text`, default: () => `derived` })
+  @Column({ name: `relationship_type`, type: `text`, default: '`derived`' })
   relationshipType: `derived` | `copied` | `modified` | `created_from`;
 
   @Column({
@@ -32,16 +40,7 @@ export class FileRelationships {
   @JoinColumn({ name: `child_file_id` })
   childrenId: MonitoredFile;
 
-  @ManyToOne(() => ProcessVersions, (version) => version.relationship)
+  @ManyToOne(() => ProcessVersion, (version) => version.relationship)
   @JoinColumn({ name: `process_version_id` })
-  version: ProcessVersions;
-
-  @Index(
-    `PARENT_ID_CHILD_FILE_ID_RELATIONSHIP_TYPE`,
-    [`parent_file_id`, `child_file_id`, `process_version_id`],
-    {
-      unique: true,
-    },
-  )
-  ParentChildVerIds: number;
+  version: ProcessVersion;
 }

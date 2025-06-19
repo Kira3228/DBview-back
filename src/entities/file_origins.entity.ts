@@ -6,10 +6,14 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { MonitoredFile } from './monitored-file.entity';
-
+import { MonitoredFile } from './monitored_file.entity';
+@Index('idx_file_origins_file', ['file'])
+@Index('idx_file_origins_origin', ['originFile'])
+@Index(`FILE_ORIGIN_FILE_IDS`, [`file`, `originFile`], {
+  unique: true,
+})
 @Entity(`file_origins`)
-export class FileOrigins {
+export class FileOrigin {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -30,9 +34,4 @@ export class FileOrigins {
   @ManyToOne(() => MonitoredFile, (file) => file.descendants)
   @JoinColumn({ name: 'origin_file_id' })
   originFile: MonitoredFile;
-
-  @Index(`FILE_ORIGIN_FILE_IDS`, [`file_id`, `origin_file_id`], {
-    unique: true,
-  })
-  fileOriginFileIds: number;
 }

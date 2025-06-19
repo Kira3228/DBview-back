@@ -1,25 +1,27 @@
 import {
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { MonitoredFile } from './monitored-file.entity';
+import { MonitoredFile } from './monitored_file.entity';
 import { Process } from './process.entity';
-
+@Index('idx_system_events_timestamp', ['timestamp'])
+@Index('idx_system_events_type', ['eventType'])
 @Entity(`system_events`)
-export class SystemEvents {
+export class SystemEvent {
   @PrimaryGeneratedColumn()
   id: number;
   @Column({ name: `event_type`, type: `text` })
   eventType: string;
   @Column({ name: `event_data`, type: `text`, nullable: true })
   eventData: string;
-  @Column({ name: `severity`, type: `text`, default: () => `info` })
+  @Column({ name: `severity`, type: `text`, default: '`info`' })
   severity: `debug` | `info` | `warning` | `error` | `critical`;
-  @Column({ name: `source`, type: `text`, default: () => `fanotify` })
+  @Column({ name: `source`, type: `text`, default: '`fanotify`' })
   source: string;
   @Column({
     name: `timestamp`,
