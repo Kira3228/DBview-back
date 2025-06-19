@@ -13,6 +13,8 @@ import { ProcessVersion } from './entities/process_version.entity';
 import { SystemEvent } from './entities/system_events.entity';
 import { User } from './entities/user.entity';
 import { TestModule } from './test/test.module';
+import { MoniteredFilesModule } from './monitered-files/monitered-files.module';
+import { EventLogModule } from './event-log/event-log.module';
 
 @Module({
   imports: [
@@ -35,6 +37,8 @@ import { TestModule } from './test/test.module';
     }),
     MonitoredFilesModule,
     TestModule,
+    MoniteredFilesModule,
+    EventLogModule,
   ],
   controllers: [],
   providers: [],
