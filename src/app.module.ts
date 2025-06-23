@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MonitoredFilesModule } from './monitored-files/monitored-files.module';
-import { TestService } from './test/test.service';
-import { TestController } from './test/test.controller';
 import { FileAccessEvent } from './entities/file_access_events.entity';
 import { FileOrigin } from './entities/file_origins.entity';
 import { FileRelationship } from './entities/file_relationships.entity';
@@ -13,14 +11,15 @@ import { ProcessVersion } from './entities/process_version.entity';
 import { SystemEvent } from './entities/system_events.entity';
 import { User } from './entities/user.entity';
 import { TestModule } from './test/test.module';
-import { MoniteredFilesModule } from './monitered-files/monitered-files.module';
+
 import { EventLogModule } from './event-log/event-log.module';
+import { SystemEventModule } from './system-event/system-event.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: 'pmovt.db', 
+      database: 'pmovt.db',
       entities: [
         User,
         SystemEvent,
@@ -33,12 +32,12 @@ import { EventLogModule } from './event-log/event-log.module';
         FileAccessEvent,
       ],
       synchronize: false,
-      logging: true, 
+      logging: true,
     }),
     MonitoredFilesModule,
     TestModule,
-    MoniteredFilesModule,
     EventLogModule,
+    SystemEventModule,
   ],
   controllers: [],
   providers: [],

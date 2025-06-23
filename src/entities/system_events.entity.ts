@@ -3,7 +3,6 @@ import {
   Entity,
   Index,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -32,9 +31,9 @@ export class SystemEvent {
 
   @ManyToOne(() => MonitoredFile, (file) => file.systemEvents)
   @JoinColumn({ name: `related_file_id` })
-  relatedFileId: number;
+  relatedFileId: MonitoredFile;
 
   @ManyToOne(() => Process, (process) => process.systemEvents)
   @JoinColumn({ name: `related_process_id` })
-  relatedProcessId: number;
+  relatedProcessId: MonitoredFile;
 }

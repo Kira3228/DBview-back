@@ -22,7 +22,7 @@ export class MonitoredFile {
   id: number;
 
   @Column({ name: 'filesystem_id', type: 'text' })
-  filesystemId: string;
+  fileSystemId: string;
 
   @Column({ type: 'integer' })
   inode: number;
