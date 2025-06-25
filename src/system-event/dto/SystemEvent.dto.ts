@@ -15,9 +15,12 @@ export class SystemEventRequetDto {
   timestamp: Date;
 }
 export class SystemEventFiltersDto {
+  fileName?: string;
+  userName?: string;
+  mni?: string;
+  eventType?: string;
   page: number = 1;
   limit: number = 30;
-  severity?: string;
   dateFrom?: string;
   dateTo?: string;
 }

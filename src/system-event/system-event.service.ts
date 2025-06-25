@@ -1,7 +1,8 @@
+import { MonitoredFile } from 'src/entities/monitored_file.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SystemEvent } from 'src/entities/system_events.entity';
-import { ManyToMany, Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { SystemEventCreateDto } from './dto/SystemEvent.dto';
 
 @Injectable()
@@ -17,35 +18,48 @@ export class SystemEventService {
       eventType: dto.eventType,
       eventData: dto.eventData,
       severity: dto.severity,
-      source: dto.source, // Добавлено
+      source: dto.source,
     });
     return this.repo.save(event);
   }
+
   async getPaginated(
     page: number = 1,
     limit: number = 30,
-    filters?: { severity?: string; dateFrom?: string; dateTo?: string },
+    filters?: {
+      fileName?: string;
+      userName?: string;
+      mni?: string;
+      eventType?: string;
+      dateFrom?: string;
+      dateTo?: string;
+    },
   ) {
-    const query = this.repo.createQueryBuilder('event');
-
-    if (filters?.severity) {
-      query.andWhere('event.severity = :severity', {
-        severity: filters.severity,
-      });
-    }
+    const where: any = {};
 
     if (filters?.dateFrom && filters?.dateTo) {
-      query.andWhere('event.timestamp BETWEEN :dateFrom AND :dateTo', {
-        dateFrom: filters.dateFrom,
-        dateTo: filters.dateTo,
-      });
+      where.timestamp = Between(filters.dateFrom, filters.dateTo);
     }
-
-    const [results, total] = await query
-      .take(limit)
-      .skip((page - 1) * limit)
-      .orderBy('event.timestamp', 'DESC')
-      .getManyAndCount();
+    if (filters?.userName) {
+      where.userName = filters.userName;
+    }
+    if (filters?.fileName) {
+      where.fileName = filters.fileName;
+    }
+    
+    if (filters?.eventType) {
+      where.eventType = filters.eventType;
+    }
+    const [results, total] = await this.repo.findAndCount({
+      where: {
+        
+      },
+      take: limit,
+      skip: (page - 1) * limit,
+      order: {
+        timestamp: 'DESC',
+      },
+    });
 
     return {
       data: results,
