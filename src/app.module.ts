@@ -14,6 +14,7 @@ import { TestModule } from './test/test.module';
 
 import { EventLogModule } from './event-log/event-log.module';
 import { SystemEventModule } from './system-event/system-event.module';
+import { SystemLogModule } from './system-log/system-log.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { SystemEventModule } from './system-event/system-event.module';
     TestModule,
     EventLogModule,
     SystemEventModule,
+    SystemLogModule,
   ],
   controllers: [],
   providers: [],

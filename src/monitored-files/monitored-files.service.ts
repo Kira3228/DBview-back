@@ -79,8 +79,8 @@ export class MonitoredFilesService {
 
     const [data, count] = await this.repo.findAndCount({
       where,
-      relations: {
-        status: true,
+      select:{
+        
       },
       order,
       skip,
