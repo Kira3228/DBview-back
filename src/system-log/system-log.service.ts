@@ -34,63 +34,67 @@ export class SystemLogService {
     return events;
   }
 
-  async getFilteredSystemLog(filters: FiltersDto, page: number = 1, limit: number = 10) {
-    const query = this.systemEventRepo
-      .createQueryBuilder('event')
-      .leftJoinAndSelect('event.relatedFileId', 'file');
-    
+  async getFilteredSystemLog(filters: FiltersDto, page = 1, limit = 30) {
+    const where: any = {};
+
+    // Простые фильтры по event
     if (filters.eventType) {
-      query.andWhere('event.eventType = :eventType', {
-        eventType: filters.eventType,
-      });
+      where.eventType = filters.eventType;
     }
 
+    // Фильтры по связанному файлу
+    const fileWhere: any = {};
     if (filters.status) {
-      query.andWhere('file.status = :status', { status: filters.status });
+      fileWhere.status = filters.status;
     }
-
     if (filters.filePath) {
-      query.andWhere('file.filePath = :filePath', {
-        filePath: filters.filePath,
-      });
+      fileWhere.filePath = filters.filePath;
     }
 
+    // Вложенные фильтры
     if (filters.relatedFileId) {
       if (filters.relatedFileId.status) {
-        query.andWhere('file.status = :status', {
-          status: filters.relatedFileId.status,
-        });
+        fileWhere.status = filters.relatedFileId.status;
       }
       if (filters.relatedFileId.filePath) {
-        query.andWhere('file.filePath = :filePath', {
-          filePath: filters.relatedFileId.filePath,
-        });
+        fileWhere.filePath = filters.relatedFileId.filePath;
       }
     }
 
-    // Добавляем пагинацию
-    const skip = (page - 1) * limit;
-    query.skip(skip).take(limit);
+    if (Object.keys(fileWhere).length > 0) {
+      where.relatedFileId = fileWhere;
+    }
 
-    const [events, totalCount] = await query
-      .select([
-        'event.id',
-        'event.timestamp',
-        'event.eventType',
-        'event.source',
-        'file.id',
-        'file.filePath',
-        'file.fileName',
-        'file.status',
-      ])
-      .getManyAndCount();
+    const [events, totalCount] = await this.systemEventRepo.findAndCount({
+      where,
+      relations: ['relatedFileId', `relatedProcessId`],
+      select: {
+        id: true,
+        timestamp: true,
+        eventType: true,
+        source: true,
 
-    return { 
-      events, 
+        relatedFileId: {
+          id: true,
+          filePath: true,
+          fileName: true,
+          status: true,
+        },
+        relatedProcessId: {
+          id: true,
+          pid: true,
+        },
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return {
+      events,
       totalCount,
       page,
       totalPages: Math.ceil(totalCount / limit),
-      limit
+      limit,
     };
   }
 }

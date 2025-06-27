@@ -35,5 +35,5 @@ export class SystemEvent {
 
   @ManyToOne(() => Process, (process) => process.systemEvents)
   @JoinColumn({ name: `related_process_id` })
-  relatedProcessId: MonitoredFile;
+  relatedProcessId: Process;
 }
