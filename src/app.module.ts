@@ -10,11 +10,13 @@ import { ProcessFileRead } from './entities/process_file_reads.entity';
 import { ProcessVersion } from './entities/process_version.entity';
 import { SystemEvent } from './entities/system_events.entity';
 import { User } from './entities/user.entity';
-import { TestModule } from './test/test.module';
 
 import { EventLogModule } from './event-log/event-log.module';
 import { SystemEventModule } from './system-event/system-event.module';
 import { SystemLogModule } from './system-log/system-log.module';
+
+import { ProcessModule } from './process/process.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -36,10 +38,13 @@ import { SystemLogModule } from './system-log/system-log.module';
       logging: true,
     }),
     MonitoredFilesModule,
-    TestModule,
     EventLogModule,
     SystemEventModule,
     SystemLogModule,
+
+    ProcessModule,
+
+    UserModule,
   ],
   controllers: [],
   providers: [],

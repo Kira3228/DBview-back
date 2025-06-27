@@ -28,7 +28,14 @@ export class SystemLogService {
           fileName: true,
           status: true,
         },
-        relatedProcessId: true,
+        relatedProcessId: {
+          id: true,
+          pid: true,
+          user: {
+            id: true,
+            userName: true,
+          },
+        },
       },
     });
     return events;
