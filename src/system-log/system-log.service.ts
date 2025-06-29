@@ -27,6 +27,7 @@ export class SystemLogService {
           filePath: true,
           fileName: true,
           status: true,
+          fileSystemId: true,
         },
         relatedProcessId: {
           id: true,
@@ -86,6 +87,7 @@ export class SystemLogService {
           filePath: true,
           fileName: true,
           status: true,
+          fileSystemId: true,
         },
         relatedProcessId: {
           id: true,
