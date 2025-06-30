@@ -1,3 +1,6 @@
+import { Type } from 'class-transformer';
+import { IsDataURI, IsDate, IsOptional } from 'class-validator';
+
 export class FiltersDto {
   eventType?: string;
   timestamp?: Date;
@@ -9,4 +12,12 @@ export class FiltersDto {
   };
   page?: number;
   limit?: number;
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  startDate?: Date;
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  endDate?: Date;
 }

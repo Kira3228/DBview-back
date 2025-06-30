@@ -1,6 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { SystemLogService } from './system-log.service';
 import { FiltersDto } from './dto/filters.dto';
+import { log } from 'console';
 
 @Controller('system-log')
 export class SystemLogController {
@@ -12,6 +13,7 @@ export class SystemLogController {
   }
   @Get('/getFilteredSystemLog')
   getFilteredSystemLog(@Query() filters: FiltersDto) {
+    log(typeof filters.startDate);
     return this.systemLogService.getFilteredSystemLog(
       filters,
       filters.page,

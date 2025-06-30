@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MonitoredFile } from 'src/entities/monitored_file.entity';
 import { SystemEvent } from 'src/entities/system_events.entity';
-import { Repository } from 'typeorm';
+import { Between, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { FiltersDto } from './dto/filters.dto';
+import { log } from 'console';
 
 @Injectable()
 export class SystemLogService {
@@ -68,7 +69,21 @@ export class SystemLogService {
         fileWhere.filePath = filters.relatedFileId.filePath;
       }
     }
-
+    if (filters.startDate) {
+      const testDate = new Date(filters.startDate);
+      where.timestamp = MoreThanOrEqual(new Date(filters.startDate));
+      log(where.timestamp);
+    }
+    if (filters.endDate) {
+      where.timestamp = LessThanOrEqual(new Date(filters.endDate));
+      log(where.timestamp);
+    }
+    if (filters.startDate && filters.endDate) {
+      where.timestamp = Between(
+        new Date(filters.startDate),
+        new Date(filters.endDate),
+      );
+    }
     if (Object.keys(fileWhere).length > 0) {
       where.relatedFileId = fileWhere;
     }
