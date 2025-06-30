@@ -13,7 +13,6 @@ export class SystemLogController {
   }
   @Get('/getFilteredSystemLog')
   getFilteredSystemLog(@Query() filters: FiltersDto) {
-    log(typeof filters.startDate);
     return this.systemLogService.getFilteredSystemLog(
       filters,
       filters.page,

@@ -6,9 +6,12 @@ export class FiltersDto {
   timestamp?: Date;
   status?: string;
   filePath?: string;
+  fileSystemId?: string;
+
   relatedFileId?: {
     filePath?: string;
     status?: string;
+    fileSystemId?: string;
   };
   page?: number;
   limit?: number;

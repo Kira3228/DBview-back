@@ -51,15 +51,17 @@ export class SystemLogService {
       where.eventType = filters.eventType;
     }
 
-    // Фильтры по связанному файлу
     const fileWhere: any = {};
+
     if (filters.status) {
       fileWhere.status = filters.status;
     }
     if (filters.filePath) {
       fileWhere.filePath = filters.filePath;
     }
-
+    if (filters.fileSystemId) {
+      fileWhere.fileSystemId = filters.fileSystemId;
+    }
     // Вложенные фильтры
     if (filters.relatedFileId) {
       if (filters.relatedFileId.status) {
@@ -68,7 +70,12 @@ export class SystemLogService {
       if (filters.relatedFileId.filePath) {
         fileWhere.filePath = filters.relatedFileId.filePath;
       }
+      if (filters.relatedFileId.fileSystemId) {
+        fileWhere.fileSystemId = filters.relatedFileId.fileSystemId;
+      }
     }
+    log(filters.relatedFileId);
+
     if (filters.startDate) {
       const testDate = new Date(filters.startDate);
       where.timestamp = MoreThanOrEqual(new Date(filters.startDate));
@@ -87,7 +94,7 @@ export class SystemLogService {
     if (Object.keys(fileWhere).length > 0) {
       where.relatedFileId = fileWhere;
     }
-
+    log(where);
     const [events, totalCount] = await this.systemEventRepo.findAndCount({
       where,
       relations: ['relatedFileId', `relatedProcessId`],
