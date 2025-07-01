@@ -26,10 +26,9 @@ export class SystemLogController {
     const data = await this.systemLogService.getAllLogs(); // массив объектов
 
     if (!data || !data.length) {
-      return res.status(204).send(); // No content
+      return res.status(204).send();
     }
-
-    // Преобразуем в CSV
+    
     const headers = Object.keys(data[0]).join(',');
     const rows = data
       .map((row) =>
