@@ -18,9 +18,9 @@ export class FiltersDto {
   @IsOptional()
   @IsDate()
   @Type(() => Date)
-  startDate?: Date;
+  startDate?: string;
   @IsOptional()
   @IsDate()
   @Type(() => Date)
-  endDate?: Date;
+  endDate?: string;
 }

@@ -5,6 +5,8 @@ import { SystemEvent } from 'src/entities/system_events.entity';
 import { Between, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { FiltersDto } from './dto/filters.dto';
 import { log } from 'console';
+import { filter } from 'rxjs';
+import { queryObjects } from 'v8';
 
 @Injectable()
 export class SystemLogService {
@@ -77,24 +79,25 @@ export class SystemLogService {
     log(filters.relatedFileId);
 
     if (filters.startDate) {
-      const testDate = new Date(filters.startDate);
-      where.timestamp = MoreThanOrEqual(new Date(filters.startDate));
-      log(where.timestamp);
+      where.timestamp = MoreThanOrEqual(new Date(Number(filters.startDate)));
     }
     if (filters.endDate) {
-      where.timestamp = LessThanOrEqual(new Date(filters.endDate));
-      log(where.timestamp);
+      where.timestamp = LessThanOrEqual(new Date(Number(filters.endDate)));
     }
     if (filters.startDate && filters.endDate) {
       where.timestamp = Between(
-        new Date(filters.startDate),
-        new Date(filters.endDate),
+        new Date(Number(filters.startDate)),
+        new Date(Number(filters.endDate)),
       );
+      console.log(new Date(filters.endDate));
     }
     if (Object.keys(fileWhere).length > 0) {
       where.relatedFileId = fileWhere;
     }
-    log(where);
+    console.log(filters.startDate, filters.endDate);
+    const from = new Date(Number(filters.startDate));
+    console.log(from);
+
     const [events, totalCount] = await this.systemEventRepo.findAndCount({
       where,
       relations: ['relatedFileId', `relatedProcessId`],
@@ -127,5 +130,8 @@ export class SystemLogService {
       totalPages: Math.ceil(totalCount / limit),
       limit,
     };
+  }
+  async getAllLogs() {
+    return this.systemEventRepo.find(); // или find с фильтрами
   }
 }
