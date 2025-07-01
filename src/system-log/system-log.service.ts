@@ -76,7 +76,6 @@ export class SystemLogService {
         fileWhere.fileSystemId = filters.relatedFileId.fileSystemId;
       }
     }
-    log(filters.relatedFileId);
 
     if (filters.startDate) {
       where.timestamp = MoreThanOrEqual(new Date(Number(filters.startDate)));

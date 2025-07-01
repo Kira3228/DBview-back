@@ -17,6 +17,7 @@ import { SystemLogModule } from './system-log/system-log.module';
 
 import { ProcessModule } from './process/process.module';
 import { UserModule } from './user/user.module';
+import { ActiveFilesModule } from './active-files/active-files.module';
 
 @Module({
   imports: [
@@ -45,6 +46,8 @@ import { UserModule } from './user/user.module';
     ProcessModule,
 
     UserModule,
+
+    ActiveFilesModule,
   ],
   controllers: [],
   providers: [],
