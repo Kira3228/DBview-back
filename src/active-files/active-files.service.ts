@@ -20,7 +20,7 @@ export class ActiveFilesService {
     if (filters.filePath) where.filePath = filters.filePath;
     if (filters.inode) where.inode = filters.inode;
 
-    const [file, totalCount] = await this.monitoredFilesRepo.findAndCount({
+    const [files, totalCount] = await this.monitoredFilesRepo.findAndCount({
       where,
       select: {
         id: true,
@@ -35,7 +35,7 @@ export class ActiveFilesService {
       take: limit,
     });
     return {
-      file,
+      files,
       totalCount,
       page,
       totalPage: Math.ceil(totalCount / limit),
@@ -65,4 +65,5 @@ export class ActiveFilesService {
       limit,
     };
   }
+  
 }

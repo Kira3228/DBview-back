@@ -45,7 +45,7 @@ export class SystemLogService {
     return events;
   }
 
-  async getFilteredSystemLog(filters: FiltersDto, page = 1, limit = 30) {
+  async getFilteredSystemLog(filters: FiltersDto, page = 1, limit = 4) {
     const where: any = {};
 
     // Простые фильтры по event
@@ -88,14 +88,12 @@ export class SystemLogService {
         new Date(Number(filters.startDate)),
         new Date(Number(filters.endDate)),
       );
-      console.log(new Date(filters.endDate));
     }
     if (Object.keys(fileWhere).length > 0) {
       where.relatedFileId = fileWhere;
     }
-    console.log(filters.startDate, filters.endDate);
+
     const from = new Date(Number(filters.startDate));
-    console.log(from);
 
     const [events, totalCount] = await this.systemEventRepo.findAndCount({
       where,
@@ -121,7 +119,7 @@ export class SystemLogService {
       skip: (page - 1) * limit,
       take: limit,
     });
-
+    log(where);
     return {
       events,
       totalCount,
