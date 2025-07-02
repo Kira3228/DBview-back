@@ -6,7 +6,7 @@ import { ActiveFilesFiltersDto } from './dto/ActiveFilesFilters.dto';
 export class ActiveFilesController {
   constructor(private readonly activeFilesService: ActiveFilesService) {}
 
-  @Get()
+  @Get(`active`)
   get(@Query() filters: ActiveFilesFiltersDto) {
     return this.activeFilesService.getActiveFiles(
       filters,
