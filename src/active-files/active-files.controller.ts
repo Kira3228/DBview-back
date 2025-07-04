@@ -16,8 +16,12 @@ export class ActiveFilesController {
     );
   }
   @Get(`archive`)
-  getArchive(@Query(`page`) page: number, @Query(`limit`) limit: number) {
-    return this.activeFilesService.getArchive(page, limit);
+  getArchive(
+    @Query() filters: ActiveFilesFiltersDto,
+    @Query(`page`) page: number,
+    @Query(`limit`) limit: number,
+  ) {
+    return this.activeFilesService.getArchive(filters, page, limit);
   }
   @Patch(`active/update/:id`)
   updateStatus(@Body() dto: UpdateStatusDto, @Param(`id`) id: number) {

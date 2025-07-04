@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MonitoredFile } from 'src/entities/monitored_file.entity';
 import { Like, Repository } from 'typeorm';
 import { UpdateStatusDto } from './dto/updateStatus.dto';
+import { log } from 'console';
 
 @Injectable()
 export class ActiveFilesService {
@@ -44,27 +45,50 @@ export class ActiveFilesService {
     };
   }
 
-  async getArchive(page: number = 1, limit: number = 30) {
-    const [archivedFiles, totalCount] =
-      await this.monitoredFilesRepo.findAndCount({
-        where: [
-          {
-            status: 'archived',
-          },
-          {
-            status: `deleted`,
-          },
-        ],
-        skip: (page - 1) * limit,
-      });
+  async getArchive(
+    filters: ActiveFilesFiltersDto,
+    page: number = 1,
+    limit: number = 30,
+  ) {
+    // Создаем базовые условия WHERE
+    const baseConditions = [];
+
+    // Добавляем условия для каждого статуса
+    const statusConditions = ['archived', 'deleted'].map((status) => ({
+      ...this.buildWhereConditions(filters),
+      status,
+    }));
+
+    // Объединяем условия
+    const where = [...statusConditions];
+
+    // Выполняем запрос
+    const [files, totalCount] = await this.monitoredFilesRepo.findAndCount({
+      where,
+      skip: (page - 1) * limit,
+      take: limit, // Добавляем take для ограничения количества результатов
+    });
 
     return {
-      archivedFiles,
+      files,
       totalCount,
       page,
-      totalPage: Math.ceil(totalCount / limit),
+      totalPages: Math.ceil(totalCount / limit), // Более правильное название "totalPages"
       limit,
     };
+  }
+  private buildWhereConditions(filters: ActiveFilesFiltersDto) {
+    const where: any = {};
+
+    if (filters.filePath) {
+      where.filePath = Like(`%${filters.filePath}%`);
+    }
+
+    if (filters.inode) {
+      where.inode = Like(`%${filters.inode}%`);
+    }
+
+    return where;
   }
 
   async updateStatus(dto: UpdateStatusDto, id: number) {
