@@ -18,6 +18,7 @@ import { SystemLogModule } from './system-log/system-log.module';
 import { ProcessModule } from './process/process.module';
 import { UserModule } from './user/user.module';
 import { ActiveFilesModule } from './active-files/active-files.module';
+import { FileDetailsModule } from './file-details/file-details.module';
 
 @Module({
   imports: [
@@ -48,6 +49,8 @@ import { ActiveFilesModule } from './active-files/active-files.module';
     UserModule,
 
     ActiveFilesModule,
+
+    FileDetailsModule,
   ],
   controllers: [],
   providers: [],

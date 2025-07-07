@@ -22,6 +22,7 @@ export class SystemLogService {
       relations: [`relatedFileId`],
       select: {
         id: true,
+        eventData: true,
         timestamp: true,
         eventType: true,
         source: true,
@@ -99,6 +100,7 @@ export class SystemLogService {
       where,
       relations: ['relatedFileId', `relatedProcessId`],
       select: {
+        eventData: true,
         id: true,
         timestamp: true,
         eventType: true,
@@ -129,6 +131,23 @@ export class SystemLogService {
     };
   }
   async getAllLogs() {
-    return this.systemEventRepo.find(); // или find с фильтрами
+    const data = await this.systemEventRepo.find();
+    const headers = Object.keys(data[0]).join(',');
+    const rows = data
+      .map((row) =>
+        Object.values(row)
+          .map((val) => {
+            const stringVal =
+              typeof val === 'object' ? JSON.stringify(val) : String(val);
+            return `"${stringVal.replace(/"/g, '""')}"`; // экранируем кавычки
+          })
+          .join(','),
+      )
+      .join('\n');
+    return {
+      data,
+      headers,
+      rows,
+    }; 
   }
 }

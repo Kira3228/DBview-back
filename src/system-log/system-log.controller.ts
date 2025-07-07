@@ -23,24 +23,12 @@ export class SystemLogController {
 
   @Get(`exportCsv`)
   async exportCVS(@Res() res: Response) {
-    const data = await this.systemLogService.getAllLogs(); // массив объектов
+    const { data, headers, rows } = await this.systemLogService.getAllLogs();
+    // массив объектов
 
     if (!data || !data.length) {
       return res.status(204).send();
     }
-    
-    const headers = Object.keys(data[0]).join(',');
-    const rows = data
-      .map((row) =>
-        Object.values(row)
-          .map((val) => {
-            const stringVal =
-              typeof val === 'object' ? JSON.stringify(val) : String(val);
-            return `"${stringVal.replace(/"/g, '""')}"`; // экранируем кавычки
-          })
-          .join(','),
-      )
-      .join('\n');
 
     const csv = `${headers}\n${rows}`;
 
