@@ -2,7 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MonitoredFile } from 'src/entities/monitored_file.entity';
 import { SystemEvent } from 'src/entities/system_events.entity';
-import { Between, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import {
+  Between,
+  FindOptionsWhere,
+  In,
+  LessThanOrEqual,
+  Like,
+  MoreThanOrEqual,
+  Repository,
+} from 'typeorm';
 import { FiltersDto } from './dto/filters.dto';
 import { log } from 'console';
 import { filter } from 'rxjs';
@@ -132,14 +140,34 @@ export class SystemLogService {
   }
   async getAllLogs() {
     const data = await this.systemEventRepo.find();
-    const headers = Object.keys(data[0]).join(',');
+
+    return this.exportCSV(data);
+  }
+
+  async getSelectedLogs(ids?: number[]) {
+    const where: FindOptionsWhere<SystemEvent> = {};
+    if (ids && ids.length) {
+      where.id = In(ids);
+    }
+    const data = await this.systemEventRepo.find({
+      where,
+    });
+    return this.exportCSV(data);
+  }
+
+  private async exportCSV(data: any) {
+    if (!data || data.length === 0) {
+      return { data: [], headers: '', rows: '' };
+    }
+
+    const headers = Object.keys(data[0]).join(`,`);
     const rows = data
       .map((row) =>
         Object.values(row)
           .map((val) => {
             const stringVal =
               typeof val === 'object' ? JSON.stringify(val) : String(val);
-            return `"${stringVal.replace(/"/g, '""')}"`; // экранируем кавычки
+            return `"${stringVal.replace(/"/g, '""')}"`;
           })
           .join(','),
       )
@@ -148,6 +176,6 @@ export class SystemLogService {
       data,
       headers,
       rows,
-    }; 
+    };
   }
 }

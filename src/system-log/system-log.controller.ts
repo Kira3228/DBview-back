@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Res } from '@nestjs/common';
+import { Controller, Get, ParseArrayPipe, Query, Res } from '@nestjs/common';
 import { SystemLogService } from './system-log.service';
 import { FiltersDto } from './dto/filters.dto';
 import { log } from 'console';
@@ -24,7 +24,6 @@ export class SystemLogController {
   @Get(`exportCsv`)
   async exportCVS(@Res() res: Response) {
     const { data, headers, rows } = await this.systemLogService.getAllLogs();
-    // массив объектов
 
     if (!data || !data.length) {
       return res.status(204).send();
@@ -32,7 +31,26 @@ export class SystemLogController {
 
     const csv = `${headers}\n${rows}`;
 
-    // Отправляем как файл
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename="logs.csv"');
+    res.send(csv);
+  }
+  @Get(`exportSelectedCsv`)
+  async exportSelectedCVS(
+    @Res() res: Response,
+    @Query(`ids`, new ParseArrayPipe({ items: Number, optional: true }))
+    ids?: number[],
+  ) {
+    console.log(ids);
+    const { data, headers, rows } =
+      await this.systemLogService.getSelectedLogs(ids);
+
+    if (!data || !data.length) {
+      return res.status(204).send();
+    }
+
+    const csv = `${headers}\n${rows}`;
+
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', 'attachment; filename="logs.csv"');
     res.send(csv);

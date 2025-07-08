@@ -4,7 +4,8 @@ import { constrainedMemory } from 'process';
 import { FileRelationship } from 'src/entities/file_relationships.entity';
 import { MonitoredFile } from 'src/entities/monitored_file.entity';
 import { Repository } from 'typeorm';
-import { Edge, Node } from './Graph.type';
+import { Edge, Node } from './graph.type';
+
 
 @Injectable()
 export class FileDetailsService {
